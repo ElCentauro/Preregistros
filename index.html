@@ -81,8 +81,7 @@
       align-items: center;
       padding: 15px;
       background-color: transparent;
-      /* Ajuste clave: lo posicionamos y subimos el z-index para que
-         el botón esté por encima de otros elementos. */
+      /* Ajuste para que el botón esté por encima de otros elementos */
       position: relative;
       z-index: 10000;
     }
@@ -216,6 +215,7 @@
     .records-container {
       margin-top: 20px;
       animation: fadeIn 0.5s ease;
+      width: 100%;
     }
     .records-title {
       font-size: 20px;
@@ -224,10 +224,15 @@
       font-weight: 600;
       text-align: center;
     }
-    table {
+
+    /* Hacemos la tabla horizontalmente desplazable */
+    .table-responsive {
       width: 100%;
+      overflow-x: auto;
+    }
+    table {
       border-collapse: collapse;
-      margin: 0 auto;
+      min-width: 800px; /* Fuerza scroll horizontal en pantallas chicas */
     }
     table thead {
       background-color: var(--light-gray);
@@ -237,6 +242,7 @@
       padding: 8px 10px;
       text-align: left;
       font-size: 14px;
+      white-space: nowrap; /* Para que las celdas no se partan en 2 líneas */
     }
     table th {
       font-weight: 500;
@@ -369,10 +375,6 @@
       .card {
         padding: 20px;
       }
-      table th, table td {
-        font-size: 12px;
-        padding: 6px;
-      }
       .show-records-button {
         width: 40px;
         height: 40px;
@@ -381,6 +383,7 @@
         width: 18px;
         height: 18px;
       }
+      /* La tabla seguirá con min-width, provocando scroll horizontal */
     }
   </style>
 </head>
@@ -495,7 +498,8 @@
     <!-- Contenedor para mostrar registros en tabla -->
     <div id="recordsContainer" class="records-container hidden">
       <h2 class="records-title">Personas registradas en el lote seleccionado</h2>
-      <div style="overflow-x:auto;">
+      <!-- Contenedor que da scroll horizontal a la tabla -->
+      <div class="table-responsive">
         <table id="recordsTable">
           <thead>
             <tr>
