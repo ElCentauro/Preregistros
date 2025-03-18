@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pre-Registro Entrada el Centauro</title>
+
+  <!-- Google Fonts: Poppins -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(160deg, #e0f7fa, #ffffff);
+      --card-bg: #ffffff;
+      --primary-color: #0097a7; /* Celeste intenso */
+      --secondary-color: #006064; /* Celeste oscuro */
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --font-main: "Poppins", sans-serif;
+      --success-color: #4caf50;
+      --error-color: #f44336;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+    }
+
+    body {
+      background: var(--bg-gradient);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Contenedor de mensajes de éxito/error */
+    .message-container {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 280px;
+      max-width: 90%;
+      padding: 14px 20px;
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      font-size: 16px;
+      z-index: 9999;
+      display: none;
+      animation: fadeInOut 4s forwards;
+    }
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+      }
+      10% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      80% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+      }
+    }
+
+    /* Encabezado con botón (icono de descarga) */
+    header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 15px;
+      background-color: transparent;
+    }
+
+    /* Botón circular con un ícono SVG */
+    .show-records-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      border: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+    .show-records-button:hover {
+      background-color: var(--secondary-color);
+    }
+    .show-records-button:active {
+      transform: scale(0.96);
+    }
+    .show-records-button:focus {
+      outline: none;
+    }
+    /* Ícono de flecha hacia abajo dentro del botón */
+    .show-records-button svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    /* Contenido principal */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Contenedor central (card) */
+    .card {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
+      margin-top: 20px;
+      animation: fadeIn 0.5s ease;
+      text-align: left; /* Para alinear las etiquetas del formulario */
+    }
+
+    /* Logo y Título */
+    .title-container img {
+      max-width: 200px;
+      width: auto;
+      margin-bottom: 20px;
+    }
+    .title-container h1 {
+      font-size: 32px;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .title-container p {
+      font-size: 18px;
+      color: var(--text-color);
+      margin-bottom: 0;
+    }
+
+    /* Formularios */
+    label {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      font-family: var(--font-main);
+    }
+    select:focus,
+    input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+
+    /* Botón principal */
+    .btn-submit {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 24px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: background-color 0.3s, transform 0.1s;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .btn-submit:hover {
+      background-color: var(--secondary-color);
+    }
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Contenedor para mostrar registros en tabla */
+    .records-container {
+      margin-top: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+    .records-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: var(--secondary-color);
+      font-weight: 600;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    table thead {
+      background-color: var(--light-gray);
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    table th {
+      font-weight: 500;
+    }
+
+    /* Botones en la sección de registros */
+    .records-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .action-button {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s, transform 0.1s;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .action-button:hover {
+      background-color: var(--secondary-color);
+    }
+    .action-button:active {
+      transform: scale(0.98);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 15px 0;
+      background-color: var(--light-gray);
+      font-size: 14px;
+      color: #666;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Modal para pedir el lote (con select) */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9998;
+    }
+    .modal-content {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-content h2 {
+      margin-bottom: 10px;
+      color: var(--secondary-color);
+    }
+    .modal-content p {
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .modal-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      font-family: var(--font-main);
+      text-align: center;
+    }
+    .modal-button {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.1s;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .modal-button:hover {
+      background-color: var(--secondary-color);
+    }
+    .modal-button:active {
+      transform: scale(0.98);
+    }
+    .close-modal {
+      position: absolute;
+      top: 15px; right: 20px;
+      cursor: pointer;
+      font-size: 24px;
+      color: #999;
+    }
+    .close-modal:hover {
+      color: #666;
+    }
+
+    /* Responsividad para pantallas pequeñas */
+    @media (max-width: 480px) {
+      .title-container h1 {
+        font-size: 26px;
+      }
+      .title-container p {
+        font-size: 16px;
+      }
+      .card {
+        padding: 20px;
+      }
+      table th, table td {
+        font-size: 12px;
+        padding: 6px;
+      }
+      .modal-content {
+        padding: 15px 20px;
+      }
+      .show-records-button {
+        width: 40px;
+        height: 40px;
+      }
+      .show-records-button svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Contenedor de mensajes (éxito/error) -->
+  <div id="messageContainer" class="message-container"></div>
+
+  <!-- Header con botón circular para abrir modal -->
+  <header>
+    <button
+      class="show-records-button"
+      id="openModalBtn"
+      title="Ver registros por lote"
+    >
+      <!-- Ícono SVG de flecha hacia abajo -->
+      <svg viewBox="0 0 24 24">
+        <path d="M12 5c.55 0 1 .45 1 1v8.59l2.29-2.3a.996.996 0 111.41 1.41l-4 4c-.09.09-.2.17-.33.22-.11.04-.23.07-.35.07-.12 0-.24-.03-.35-.07-.13-.05-.24-.13-.33-.22l-4-4a.996.996 0 111.41-1.41l2.29 2.3V6c0-.55.45-1 1-1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Modal para solicitar el lote (con select) -->
+  <div class="modal" id="lotModal">
+    <div class="modal-content">
+      <span class="close-modal" id="closeModal">&times;</span>
+      <h2>Seleccionar Lote</h2>
+      <p>Seleccione el lote para ver sus registros:</p>
+      <select id="loteSelectModal" class="modal-select">
+        <option value="">-- Elija --</option>
+        <option value="14">Lote 14</option>
+        <option value="49">Lote 49</option>
+      </select>
+      <button class="modal-button" id="showRecordsBtn">Mostrar Registros</button>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <main>
+    <!-- Logo y Título centrados -->
+    <div class="title-container">
+      <img src="Centauro.png" alt="Centauro" />
+      <h1>Pre-Registro Entrada el Centauro</h1>
+      <p>Complete el siguiente formulario para registrar su ingreso</p>
+    </div>
+
+    <!-- Card con los formularios -->
+    <div class="card">
+      <!-- Primer formulario: selección de Lote -->
+      <form id="loteForm">
+        <label for="lote">Vengo al Lote</label>
+        <select id="lote" required>
+          <option value="">Seleccione un lote</option>
+          <option value="14">14</option>
+          <option value="49">49</option>
+        </select>
+        <button type="submit" class="btn-submit">Continuar</button>
+      </form>
+
+      <!-- Segundo formulario: datos de pre-registro -->
+      <form id="registroForm" class="hidden">
+        <input type="hidden" id="loteElegido" name="loteElegido" />
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" required />
+
+        <label for="apellido">Apellido</label>
+        <input type="text" id="apellido" name="apellido" required />
+
+        <label for="dni">DNI</label>
+        <input type="number" id="dni" name="dni" required />
+
+        <label for="sexo">Sexo</label>
+        <select id="sexo" name="sexo" required>
+          <option value="">Selecciona una opción</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Femenino">Femenino</option>
+        </select>
+
+        <label for="vencLicencia">Vencimiento Lic. Conducir (DD/MM/AA)</label>
+        <input type="date" id="vencLicencia" name="vencLicencia" required />
+
+        <label for="patente">Patente</label>
+        <input type="text" id="patente" name="patente" required />
+
+        <label for="marca">Marca</label>
+        <input type="text" id="marca" name="marca" required />
+
+        <label for="modelo">Modelo</label>
+        <input type="text" id="modelo" name="modelo" required />
+
+        <label for="aseguradora">Empresa Aseguradora</label>
+        <input type="text" id="aseguradora" name="aseguradora" required />
+
+        <label for="nroPoliza">Nro. Poliza</label>
+        <input type="text" id="nroPoliza" name="nroPoliza" required />
+
+        <label for="vencPoliza">Vencimiento de la Poliza (DD/MM/AA)</label>
+        <input type="date" id="vencPoliza" name="vencPoliza" required />
+
+        <label for="registrado">¿Fuiste registrado anteriormente?</label>
+        <select id="registrado" name="registrado" required>
+          <option value="">Selecciona una opción</option>
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+
+        <button type="submit" class="btn-submit">Enviar Registro</button>
+      </form>
+    </div>
+
+    <!-- Contenedor para mostrar registros en tabla -->
+    <div id="recordsContainer" class="records-container hidden">
+      <h2 class="records-title">Personas registradas en el lote seleccionado</h2>
+      <div style="overflow-x:auto;">
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>DNI</th>
+              <th>Sexo</th>
+              <th>Venc. Lic.</th>
+              <th>Patente</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Aseguradora</th>
+              <th>Poliza</th>
+              <th>Venc. Poliza</th>
+              <th>Registrado?</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="records-buttons">
+        <button id="downloadExcelBtn" class="action-button hidden">
+          Descargar en Excel
+        </button>
+        <button id="backToStartBtn" class="action-button hidden">
+          Volver al inicio
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 El Centauro. Todos los derechos reservados.
+  </footer>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <!-- SheetJS para generar el archivo XLSX -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.17.0/package/dist/xlsx.full.min.js"></script>
+
+  <script>
+    /********** 1. INICIALIZACIÓN DE SUPABASE **********/
+    const SUPABASE_URL = "https://lqdnyjvcdzoqmmtvdyxt.supabase.co";
+    const SUPABASE_API_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxxZG55anZjZHpvcW1tdHZkeXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMTc2MDQsImV4cCI6MjA1Nzg5MzYwNH0.8jl-c0qJ49yKemkbDyVDxPEA5VvkNJlGufAvETbUInY";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_API_KEY);
+
+    /********** 2. REFERENCIAS DEL DOM **********/
+    const messageContainer = document.getElementById("messageContainer");
+
+    const openModalBtn = document.getElementById("openModalBtn");
+    const lotModal = document.getElementById("lotModal");
+    const closeModal = document.getElementById("closeModal");
+    const loteSelectModal = document.getElementById("loteSelectModal");
+    const showRecordsBtn = document.getElementById("showRecordsBtn");
+
+    const loteForm = document.getElementById("loteForm");
+    const registroForm = document.getElementById("registroForm");
+    const loteSelect = document.getElementById("lote");
+    const loteElegidoInput = document.getElementById("loteElegido");
+
+    const recordsContainer = document.getElementById("recordsContainer");
+    const recordsTableBody = document.querySelector("#recordsTable tbody");
+    const downloadExcelBtn = document.getElementById("downloadExcelBtn");
+    const backToStartBtn = document.getElementById("backToStartBtn");
+
+    let currentRecords = []; // Para almacenar registros y exportarlos
+
+    /********** 3. MOSTRAR/OCULTAR MODAL **********/
+    openModalBtn.addEventListener("click", () => {
+      lotModal.style.display = "flex"; // mostrar modal
+      loteSelectModal.value = "";      // limpiar selección
+    });
+    closeModal.addEventListener("click", () => {
+      lotModal.style.display = "none"; // ocultar modal
+    });
+    // Cerrar modal si clic fuera del contenido
+    window.addEventListener("click", (e) => {
+      if (e.target === lotModal) {
+        lotModal.style.display = "none";
+      }
+    });
+
+    /********** 4. TRANSICIÓN DE FORMULARIOS **********/
+    loteForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (loteSelect.value !== "") {
+        loteElegidoInput.value = loteSelect.value;
+        loteForm.classList.add("hidden");
+        registroForm.classList.remove("hidden");
+      }
+    });
+
+    registroForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = {
+        lote: parseInt(loteElegidoInput.value),
+        nombre: document.getElementById("nombre").value,
+        apellido: document.getElementById("apellido").value,
+        dni: parseInt(document.getElementById("dni").value),
+        sexo: document.getElementById("sexo").value,
+        venc_licencia: document.getElementById("vencLicencia").value,
+        patente: document.getElementById("patente").value,
+        marca: document.getElementById("marca").value,
+        modelo: document.getElementById("modelo").value,
+        aseguradora: document.getElementById("aseguradora").value,
+        nro_poliza: document.getElementById("nroPoliza").value,
+        venc_poliza: document.getElementById("vencPoliza").value,
+        registrado: document.getElementById("registrado").value,
+      };
+
+      const { data, error } = await supabaseClient
+        .from("pre_registros")
+        .insert([formData]);
+
+      if (error) {
+        showMessage("error", "Error al registrar: " + error.message);
+      } else {
+        showMessage("success", "¡Registro exitoso!");
+        // Resetea el formulario y vuelve al primer formulario
+        registroForm.reset();
+        registroForm.classList.add("hidden");
+        loteForm.reset();
+        loteForm.classList.remove("hidden");
+      }
+    });
+
+    /********** 5. MOSTRAR REGISTROS (TRAS ELEGIR LOTE EN MODAL) **********/
+    showRecordsBtn.addEventListener("click", async () => {
+      const userLote = loteSelectModal.value;
+      if (userLote !== "14" && userLote !== "49") {
+        showMessage("error", "Seleccione '14' o '49'.");
+        return;
+      }
+
+      // Ocultamos el modal
+      lotModal.style.display = "none";
+
+      try {
+        let { data, error } = await supabaseClient
+          .from("pre_registros")
+          .select("*")
+          .eq("lote", parseInt(userLote));
+
+        if (error) {
+          showMessage("error", "Error al obtener datos: " + error.message);
+          return;
+        }
+
+        // Limpiar la tabla
+        recordsTableBody.innerHTML = "";
+        currentRecords = data || [];
+
+        if (!data || data.length === 0) {
+          showMessage("info", "No hay datos registrados para el lote " + userLote);
+          recordsContainer.classList.add("hidden");
+          return;
+        }
+
+        // Mostrar en la tabla
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.id || ""}</td>
+            <td>${item.nombre || ""}</td>
+            <td>${item.apellido || ""}</td>
+            <td>${item.dni || ""}</td>
+            <td>${item.sexo || ""}</td>
+            <td>${item.venc_licencia || ""}</td>
+            <td>${item.patente || ""}</td>
+            <td>${item.marca || ""}</td>
+            <td>${item.modelo || ""}</td>
+            <td>${item.aseguradora || ""}</td>
+            <td>${item.nro_poliza || ""}</td>
+            <td>${item.venc_poliza || ""}</td>
+            <td>${item.registrado || ""}</td>
+          `;
+          recordsTableBody.appendChild(row);
+        });
+
+        recordsContainer.classList.remove("hidden");
+        downloadExcelBtn.classList.remove("hidden");
+        backToStartBtn.classList.remove("hidden");
+
+      } catch (err) {
+        showMessage("error", "Ocurrió un error al mostrar datos: " + err.message);
+      }
+    });
+
+    /********** 6. DESCARGAR EN EXCEL **********/
+    downloadExcelBtn.addEventListener("click", () => {
+      if (!currentRecords || currentRecords.length === 0) {
+        showMessage("info", "No hay datos para exportar.");
+        return;
+      }
+      try {
+        const ws = XLSX.utils.json_to_sheet(currentRecords);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+        const wbOut = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([wbOut], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const loteNumber = currentRecords[0].lote || "X";
+        const fileName = `Lote${loteNumber}_${getDateTimeString()}.xlsx`;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showMessage("error", "Ocurrió un error al exportar datos: " + err.message);
+      }
+    });
+
+    /********** 7. VOLVER AL INICIO **********/
+    backToStartBtn.addEventListener("click", () => {
+      // Ocultamos el listado y limpiamos
+      recordsContainer.classList.add("hidden");
+      downloadExcelBtn.classList.add("hidden");
+      backToStartBtn.classList.add("hidden");
+      recordsTableBody.innerHTML = "";
+      currentRecords = [];
+      // El formulario de lote y registro quedan listos para un nuevo ingreso
+    });
+
+    /********** 8. FUNCIÓN PARA MOSTRAR MENSAJES **********/
+    function showMessage(type, text) {
+      messageContainer.style.display = "block";
+      messageContainer.textContent = text;
+
+      switch (type) {
+        case "success":
+          messageContainer.style.backgroundColor = "var(--success-color)";
+          break;
+        case "error":
+          messageContainer.style.backgroundColor = "var(--error-color)";
+          break;
+        default:
+          // info, warning, etc.
+          messageContainer.style.backgroundColor = "gray";
+          break;
+      }
+
+      // Reiniciar la animación para que se ejecute de nuevo
+      messageContainer.style.animation = "none";
+      // Forzar reflow
+      void messageContainer.offsetWidth;
+      // Volver a poner la animación
+      messageContainer.style.animation = "fadeInOut 4s forwards";
+    }
+
+    // Función para obtener fecha y hora en formato YYYY-MM-DD_HH-mm
+    function getDateTimeString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const hour = String(now.getHours()).padStart(2, "0");
+      const minute = String(now.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day}_${hour}-${minute}`;
+    }
+  </script>
+</body>
+</html>
